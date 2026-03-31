@@ -1,9 +1,12 @@
 from flask import Flask, request, render_template
 import pickle
+import os
 
 app = Flask(__name__)
 
-model = pickle.load(open('model.pkl', 'rb'))
+# Load model safely
+model_path = os.path.join(os.path.dirname(__file__), "model.pkl")
+model = pickle.load(open(model_path, 'rb'))
 
 def extract_features(url):
     return [
@@ -27,4 +30,7 @@ def home():
 
     return render_template("index.html", result=result)
 
-app.run(debug=True)
+# IMPORTANT: Only run locally
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
